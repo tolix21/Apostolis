@@ -17,9 +17,42 @@ loop:
         # end of loop here
 
         addiu      $s2, $s2,  -1     # Adjust $s2 to point to last char
-
+	addi       $a1, $0,    0                         # $a1=length 
+        addu       $t1,$s1,  $zero                       # $t1=$s1 
+        
         ########################################################################
-        #  Write your code here
+# $a0=0 if it is palindrome,$a1=1 if it is not palindrome
+# $a1=string length
+# $s1 firts letters address
+# $s2 last letters address
+# $t0 first characters
+# $t1 last characters
+# $t2=1 if character not a letter
+string_length:
+	       
+        
+        addi       $a1, $a1,   1                 # increse counter
+        addiu      $t1, $t1,   1                 # go to next character of the string
+        lbu        $t0, 0($t1)                   # get next character
+        bne        $t0, $zero, string_length     # repeat if char not '\0'
+        j          palindrome_check		 # found string lensth,go to palindrome_check
+palindrome_check:
+	slti       $a0, $a1,  2                  #if the current length is less than 2 then it's palindrome,$a0=1 else $a0=0
+	bne        $a0, $zero, set_a0            #if $a0=1 go to set_a0 to set $a0=0 and exit 
+	addi       $a0, $a0,  1			 # $a0=1 if it is not palindrome make sure a0=1 at exit
+	lbu        $t0, 0($s1)			 #get  character that $s1 points at
+	lbu        $t1, 0($s2)                   #get  character that $s2 points at
+	bne        $t0,  $t1, exit               #if first and last char are not equal ,go to exit,$a0 is still $a0=1
+        beq        $t0,  $t1, continue_check     #if first and last char are  equal go to continue_check
+continue_check:
+	addiu        $s1,$s1, 1                  #set $s1 to point to next first char
+	addiu        $s2,$s2, -1                 #set $s2 to point to next last char
+	addi	     $a1,$a1, -2                 #sustract legth as many chars as read
+	j 	   palindrome_check		 #go to palindrome_check and check the next two characters
+set_a0:
+	addi      $a0,$a0,   -1                  # is palindrome but $a0=1,$a0=$a0-1,now you can exit
+	j 	  exit                           # go to exit
+
         ########################################################################
 
         
